@@ -54,6 +54,8 @@ jobs:
 
     executor: plantuml
 
+    working_directory: /tmp/plantuml
+
     steps:
       - checkout
 
