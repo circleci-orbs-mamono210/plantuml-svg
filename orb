@@ -1,0 +1,71 @@
+version: 2.1
+
+description: |
+  "Generate SVG (Scalable Vector Graphics) from all PlantUML text files in branch.
+    See details @GitHub https://github.com/circleci-orbs-tm/plantuml-svg"
+
+orbs:
+  plantuml: orbss/plantuml@volatile
+
+commands:
+  add-ca-certificates: plantuml/add-ca-certificates
+  generate: plantuml/generate
+
+executors:
+  plantuml: plantuml/plantuml
+
+jobs:
+  generate-svg:
+
+    parameters:
+      charset:
+        description: "Character Encoding of generated file. Default encoding type is system dependent."
+        type: string
+        default: ""
+
+      extension:
+        description: "File name extension of the PlantUML text file"
+        type: string
+        default: ".puml"
+
+      persist_to_workspace:
+        description: |
+          "True: execute persist_to_workspace step.
+            False: does not execute persist_to_workspace steps"
+        type: boolean
+        default: false
+
+      updated_files_only:
+        description: |
+          "True: generate output from files updated from previous commit.
+            False: generate output from files matched specified by parameter key 'extension'."
+        type: boolean
+        default: false
+
+      workspace_root:
+        description: "Root of workspace to persist"
+        type: string
+        default: "/tmp/circleci_workspace"
+
+      workspace_path:
+        description: "Path of workspace to persist"
+        type: string
+        default: "."
+
+    executor: plantuml
+
+    working_directory: /tmp/plantuml
+
+    steps:
+      - checkout
+
+      - add-ca-certificates
+
+      - generate:
+          charset: <<parameters.charset>>
+          extension: <<parameters.extension>>
+          output_file_format: svg
+          persist_to_workspace: <<parameters.persist_to_workspace>>
+          updated_files_only: <<parameters.updated_files_only>>
+          workspace_root: <<parameters.workspace_root>>
+          workspace_path: <<parameters.workspace_path>>
